@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zouhir OUARAB — Véhicule Autonome</title>
+<title>Zouhir Ouarab — Démonstrateur de perception autonome</title>
+<meta name="description" content="Projet de véhicule autonome miniature : fusion caméra + LiDAR, évitement d'obstacles et télémétrie temps réel sur Raspberry Pi.">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   :root { --black: #050505; --white: #f5f2ee; --accent: #c8a96e; --danger: #e74c3c; --safe: #2ecc71; --warn: #e67e22; }
+  img { display: block; max-width: 100%; }
 
   body {
     background: var(--black); color: var(--white);
@@ -117,13 +119,19 @@
     font-family: 'Space Mono', monospace; font-size: .65rem; color: #aaa;
     max-width: 90%; z-index: 2;
   }
+  @media (max-width: 700px) {
+    header { padding: 1rem; flex-direction: column; gap: .8rem; }
+    .page-title { font-size: 1rem; }
+    .main-grid { width: 100%; padding: 0 1rem 2rem; }
+    .panel { padding: 1.2rem; }
+  }
 </style>
 </head>
 <body>
 
 <header>
   <a href="index.html" class="btn-back">← Retour au CV</a>
-  <span class="page-title">VÉHICULE AUTONOME — RASPBERRY PI + LIDAR + IA</span>
+  <span class="page-title">PERCEPTION AUTONOME — RASPBERRY PI / LIDAR / YOLO</span>
   <div style="width:120px"></div>
 </header>
 
@@ -153,7 +161,11 @@
     </div>
     <div class="panel">
       <h2>Détails du Projet</h2>
-      <p>Conception d'un système de perception et de navigation autonome sur Raspberry Pi. Le véhicule utilise un LIDAR 360° pour la détection d'obstacles et une caméra traitée par OpenCV + YOLOv8 pour la classification.</p>
+      <p>Conception d'un démonstrateur de mobilité autonome sur Raspberry Pi combinant perception visuelle, détection de proximité et logique d'évitement. L'objectif était de relier la lecture capteurs, la décision et l'action dans une même boucle temps réel.</p>
+      <div class="desc-section">
+        <h3>Ce que ce projet démontre</h3>
+        <p>Fusion multi-capteurs, perception sur plateforme contrainte, décision embarquée et supervision lisible du comportement autonome.</p>
+      </div>
       <div class="desc-section">
         <h3>Technologies</h3>
         <span class="tech-tag">Raspberry Pi 5</span>
@@ -162,15 +174,15 @@
         <span class="tech-tag">YOLOv8</span>
         <span class="tech-tag">RPLidar A1</span>
         <span class="tech-tag">ROS2</span>
-        <span class="tech-tag">PWM Motor</span>
+        <span class="tech-tag">Commande moteur PWM</span>
       </div>
       <div class="desc-section">
-        <h3>Utilité dans la Vie Réelle</h3>
-        <p>Ce système est le fondement de la conduite autonome : un véhicule qui perçoit son environnement et prend des décisions en temps réel sans intervention humaine. Ce type de capteur et d'algorithme est utilisé par Tesla, Waymo, et dans les drones de livraison.</p>
-
-        <div class="analogy-card">
-          <div class="analogy-title">🌆 ANALOGIE : FULL SELF-DRIVING (FSD)</div>
-          <div class="analogy-desc">Superposition de Bounding Boxes LiDAR/Vision dans l'habitacle d'un véhicule autonome urbain.<br><br><i>[Emplacement libre pour insérer votre photo HD de système autonome]</i></div>
+        <h3>Application réelle</h3>
+        <p>Les briques mises en jeu se retrouvent dans les robots mobiles, navettes autonomes, drones et systèmes ADAS : perception de l'environnement, gestion d'obstacles, arbitrage de trajectoire et supervision.</p>
+        <div class="analogy-card" style="padding:0; border:none; background:transparent; height:auto;">
+          <h4 style="font-family:'Bebas Neue',sans-serif; color:var(--accent); font-size:1.1rem; margin-bottom:0.5rem; letter-spacing:0.08em; text-align:center;">🚗 VISUEL DE CONTEXTE : PERCEPTION ROUTIÈRE AUTONOME</h4>
+          <p style="font-size:0.75rem; color:#aaa; text-align:center; margin-bottom:1rem;">Détection multi-objets, compréhension de scène et trajectoire prédite en environnement urbain</p>
+          <img src="auto_detec.png" alt="Véhicule autonome avec détection d'objets et trajectoire prédite en environnement urbain" style="width:100%; height:auto; border-radius:6px; border:1px solid #333;">
         </div>
       </div>
     </div>

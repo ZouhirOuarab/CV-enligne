@@ -2,17 +2,24 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Zouhir OUARAB — Dashboard Météo API</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zouhir Ouarab — Dashboard météo temps réel</title>
+  <meta name="description" content="Projet de dashboard météo temps réel avec géolocalisation, gestion de fallback, consommation d'API externe et interface de supervision.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --black: #050505;
       --white: #f5f2ee;
       --accent: #c8a96e;
     }
+    * { box-sizing: border-box; }
+    img { display: block; max-width: 100%; }
     body {
       margin: 0; background: var(--black); color: var(--white);
       font-family: 'Space Mono', monospace; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; min-height: 100vh;
+      align-items: center; justify-content: center; min-height: 100vh; padding: 7rem 1rem 2rem;
     }
     header {
       position: absolute; top: 0; left: 0; right: 0; padding: 2rem;
@@ -26,9 +33,16 @@
     a.btn-back:hover { background: var(--accent); color: var(--black); }
     h1 { margin: 0; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.1em; font-size: 2rem; }
     
+    .page-wrap {
+      width: min(100%, 980px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
     .screen {
       background: #000; border: 8px solid #1a1a1a; border-radius: 12px;
-      width: 400px; height: 300px; padding: 2rem;
+      width: 100%; max-width: 440px; height: 300px; padding: 2rem;
       box-shadow: inset 0 0 20px rgba(200,169,110,0.1), 0 20px 50px rgba(0,0,0,0.8);
       position: relative; overflow: hidden;
       display: flex; flex-direction: column; justify-content: space-between;
@@ -49,27 +63,52 @@
     .stat-lbl { color: #666; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; }
     
     .terminal {
-      margin-top: 2rem; width: 440px; font-size: 0.7rem; color: #555; height: 100px; overflow-y: hidden;
+      margin-top: 1.25rem; width: 100%; max-width: 440px; font-size: 0.7rem; color: #555; height: 100px; overflow-y: hidden;
       background: #0a0a0a; padding: 10px; border: 1px solid #222; border-radius: 4px; line-height: 1.4;
     }
     .terminal span { color: var(--accent); }
     .terminal .err { color: #e74c3c; }
     .terminal .succ { color: #2ecc71; }
 
+    .info-panel {
+      background: rgba(255,255,255,.03); border: 1px solid rgba(200,169,110,.15);
+      border-radius: 8px; padding: 1.5rem; backdrop-filter: blur(8px);
+    }
+    .info-panel h2 {
+      margin: 0 0 .75rem; font-family: 'Bebas Neue', sans-serif;
+      color: var(--accent); font-size: 1.3rem; letter-spacing: .08em;
+    }
+    .info-panel p { color: #999; font-size: .82rem; line-height: 1.65; }
+    .desc-section { margin-top: 1rem; }
+    .desc-section h3 {
+      margin: 0 0 .4rem; font-family: 'Bebas Neue', sans-serif;
+      color: var(--white); font-size: 1rem; letter-spacing: .06em;
+    }
+    .tech-tag {
+      display: inline-block; padding: .25rem .6rem; margin: .15rem;
+      border: 1px solid #333; border-radius: 3px; font-size: .6rem;
+      color: var(--accent); letter-spacing: .08em;
+    }
+
     .analogy-card {
-      margin-top: 2rem; padding: 1rem; border-radius: 6px; width: 440px;
+      margin-top: 1rem; padding: 0; border-radius: 6px; width: 100%;
       background: linear-gradient(135deg, rgba(200,169,110,.1) 0%, rgba(0,0,0,.5) 100%);
       border: 1px dashed rgba(200,169,110,.4);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; height: 140px; position: relative; overflow: hidden;
+      text-align: center; position: relative; overflow: hidden;
     }
     .analogy-title {
       font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--accent);
-      letter-spacing: .08em; z-index: 2; margin-bottom: .5rem;
+      letter-spacing: .08em; z-index: 2; margin: 1rem 0 .35rem;
     }
     .analogy-desc {
       font-family: 'Space Mono', monospace; font-size: .65rem; color: #aaa;
-      max-width: 90%; z-index: 2;
+      max-width: 90%; z-index: 2; margin-bottom: 1rem;
+    }
+    @media (max-width: 860px) {
+      header { padding: 1rem; flex-direction: column; gap: .75rem; }
+      .page-wrap { grid-template-columns: 1fr; }
+      .screen, .terminal { max-width: 100%; }
     }
   </style>
 </head>
@@ -81,27 +120,52 @@
   <div style="width: 100px;"></div>
 </header>
 
-<div class="screen" id="weather-screen">
+<div class="page-wrap">
   <div>
-    <h2 class="city" id="w-city">INITIALISATION...</h2>
-    <p class="desc" id="w-desc">DEMANDE DE LOCALISATION GPS</p>
-    <p class="temp" id="w-temp">--°</p>
-  </div>
-  
-  <div class="bottom-row">
-    <div class="stat"><span class="stat-val" id="w-wind">-- km/h</span><span class="stat-lbl">Vent (Vitesse)</span></div>
-    <div class="stat"><span class="stat-val" id="w-wind-dir">--°</span><span class="stat-lbl">Vent (Direction)</span></div>
-  </div>
-</div>
+    <div class="screen" id="weather-screen">
+      <div>
+        <h2 class="city" id="w-city">INITIALISATION...</h2>
+        <p class="desc" id="w-desc">DEMANDE DE LOCALISATION GPS</p>
+        <p class="temp" id="w-temp">--°</p>
+      </div>
+      
+      <div class="bottom-row">
+        <div class="stat"><span class="stat-val" id="w-wind">-- km/h</span><span class="stat-lbl">Vent (Vitesse)</span></div>
+        <div class="stat"><span class="stat-val" id="w-wind-dir">--°</span><span class="stat-lbl">Vent (Direction)</span></div>
+      </div>
+    </div>
 
-<div class="terminal" id="terminal">
-  > SYSTEM BOOT SEQ... OK<br>
-  > REQUESTING BROWSER GEOLOCATION...<br>
-</div>
+    <div class="terminal" id="terminal">
+      > SYSTEM BOOT SEQ... OK<br>
+      > REQUESTING BROWSER GEOLOCATION...<br>
+    </div>
+  </div>
 
-<div class="analogy-card">
-  <div class="analogy-title">🌍 ANALOGIE : SMART CITY & SALLE DE CONTRÔLE</div>
-  <div class="analogy-desc">Interface d'Hypervision urbaine supervisant les capteurs météorologiques globaux avec UI moderne.<br><br><i>[Emplacement libre pour insérer votre photo HD de Dashboard]</i></div>
+  <div class="info-panel">
+    <h2>Détails du Projet</h2>
+    <p>Ce dashboard illustre ma capacité à récupérer des données externes, gérer la géolocalisation, prévoir des fallbacks robustes et transformer le tout en une interface de supervision claire.</p>
+    <div class="desc-section">
+      <h3>Ce que ce projet démontre</h3>
+      <p>Consommation d'API, gestion des erreurs, géolocalisation navigateur, journalisation des états et restitution lisible d'une donnée temps réel.</p>
+    </div>
+    <div class="desc-section">
+      <h3>Technologies</h3>
+      <span class="tech-tag">JavaScript</span>
+      <span class="tech-tag">Fetch API</span>
+      <span class="tech-tag">Geolocation API</span>
+      <span class="tech-tag">Open-Meteo</span>
+      <span class="tech-tag">UI Temps Réel</span>
+    </div>
+    <div class="desc-section">
+      <h3>Application réelle</h3>
+      <p>La logique de cette page se retrouve dans les dashboards de télémétrie, les interfaces de supervision industrielle et les salles de contrôle : agréger de la donnée, gérer l'incertitude et présenter l'information utile sans bruit.</p>
+      <div class="analogy-card">
+        <div class="analogy-title">🌍 ANALOGIE : SMART CITY & SALLE DE CONTRÔLE</div>
+        <div class="analogy-desc">Lecture multi-capteurs et hypervision pour une interface d'aide à la décision.</div>
+        <img src="analogie-smartcity.jpg" alt="Interface de supervision type smart city" style="width:100%; border-top:1px solid #333;">
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>

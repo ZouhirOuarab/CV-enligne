@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zouhir OUARAB — Régulateur PID Trajectoire</title>
+<title>Zouhir Ouarab — Asservissement PID embarqué</title>
+<meta name="description" content="Projet de suivi de ligne embarqué : capteurs infrarouges, régulateur PID en C sur Arduino et visualisation de la correction en temps réel.">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   :root { --black: #050505; --white: #f5f2ee; --accent: #c8a96e; }
+  img { display: block; max-width: 100%; }
 
   body {
     background: var(--black); color: var(--white);
@@ -108,13 +110,19 @@
     font-family: 'Space Mono', monospace; font-size: .65rem; color: #aaa;
     max-width: 90%; z-index: 2;
   }
+  @media (max-width: 700px) {
+    header { padding: 1rem; flex-direction: column; gap: .8rem; }
+    .page-title { font-size: 1rem; }
+    .main-grid { width: 100%; padding: 0 1rem 2rem; }
+    .panel { padding: 1.2rem; }
+  }
 </style>
 </head>
 <body>
 
 <header>
   <a href="index.html" class="btn-back">← Retour au CV</a>
-  <span class="page-title">RÉGULATEUR PID — ARDUINO / SUIVI DE LIGNE</span>
+  <span class="page-title">ASSERVISSEMENT PID — ARDUINO / SUIVI DE LIGNE</span>
   <div style="width:120px"></div>
 </header>
 
@@ -137,14 +145,18 @@
   <div style="display:flex; flex-direction:column; gap:1rem;">
     <div class="panel">
       <h2>Détails du Système</h2>
-      <p>Ce véhicule suit une trajectoire (ligne noire) en temps réel grâce à un tableau de capteurs infrarouges connectés à un Arduino. L'algorithme PID corrige en permanence l'écart entre le robot et la consigne.</p>
+      <p>Ce démonstrateur montre une boucle d'asservissement simple mais essentielle : des capteurs infrarouges mesurent l'écart à la consigne, puis le PID corrige en continu la commande moteur pour stabiliser la trajectoire.</p>
       
-      <button class="btn-perturb" id="btn-perturb">⚠️ Perturber la Trajectoire</button>
+      <button class="btn-perturb" id="btn-perturb">⚠️ Injecter une perturbation</button>
       <p style="font-size:.72rem; color:#666; line-height:1.5;">
-        <em>Simule un choc latéral (nid de poule, vent). Observez la correction rapide et la stabilisation sur le graphe.</em>
+        <em>Simule une dérive latérale. L'intérêt est de visualiser la rapidité de correction et le retour à l'équilibre sur le graphe.</em>
       </p>
     </div>
     <div class="panel">
+      <div class="desc-section">
+        <h3>Ce que ce projet démontre</h3>
+        <p>Instrumentation, réglage d'une loi de commande, compréhension des perturbations et validation visuelle d'un comportement asservi.</p>
+      </div>
       <div class="desc-section">
         <h3>Technologies</h3>
         <span class="tech-tag">Arduino Uno</span>
@@ -154,8 +166,8 @@
         <span class="tech-tag">PWM</span>
       </div>
       <div class="desc-section" style="margin-top:1.2rem;">
-        <h3>Utilité dans la vie réelle</h3>
-        <p>Le suivi de ligne est la brique fondamentale de la robotique industrielle : AGV dans les entrepôts Amazon, robots de chaîne de montage. Le PID est l'algorithme de régulation le plus utilisé au monde (90% des systèmes industriels).</p>
+        <h3>Application réelle</h3>
+        <p>Le suivi de ligne et l'asservissement se retrouvent dans les AGV, convoyeurs, robots mobiles et systèmes de guidage. Le PID reste une brique de régulation incontournable dès qu'il faut corriger un écart de manière stable et lisible.</p>
         
         <div class="analogy-card" style="padding:0; border:none; background:transparent; height:auto;">
           <h4 style="font-family:'Bebas Neue',sans-serif; color:var(--accent); font-size:1.1rem; margin-bottom:0.5rem; letter-spacing:0.08em; text-align:center;">🚘 ANALOGIE : LSA / LANE KEEPING ASSIST</h4>
